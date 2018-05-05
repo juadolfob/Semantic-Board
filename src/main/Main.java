@@ -1,18 +1,15 @@
 package main;
-import java.io.IOException; 
-import javax.swing.SwingUtilities;  
+import java.io.IOException;
+
+import logic.SemanticBoard;
 import windowmanager.*; 
 
  class Main extends Final{
 	 public static void main(String[] args) throws   IOException {   
 	 
          
-//-------GUI
-         
-	        SwingUtilities.invokeLater(new Runnable() {  
-				public void run() {
-					new WindowManager();
-	            } 
-	        });   
+//-------GUI 
+			 SemanticBoard pan = new SemanticBoard();
+			 new WindowManager(); 
 }
 }

@@ -52,6 +52,7 @@ import javax.swing.*;
         frame.setResizable(false);  
 	}  
 	public Window(Component WindowComponents,String New_Thumbnail, int width, int height, boolean Visibility) {   
+		
 		frame = new JFrame(New_Thumbnail); 
 		frame.add(WindowComponents);
 		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -116,8 +117,8 @@ import javax.swing.*;
 	}  
 	public void clear(){    
 		frame.getContentPane().removeAll(); 
-		frame.revalidate();
-		frame.repaint();
+		frame.getContentPane().revalidate();
+		frame.getContentPane().repaint();
 	}
 	public boolean isVisible() { 
 		return frame.isVisible();
@@ -132,7 +133,15 @@ import javax.swing.*;
 	public void SetWindowLocation(){
 	}
 	public Rectangle PositioninScreen(){
-		return null;
-		
+		return null; 
+	} 
+	public void Refresh(){ 
+		frame.getContentPane().revalidate(); 
+		frame.getContentPane().repaint();
+		frame.getContentPane().getComponent(0).revalidate();
+		frame.getContentPane().getComponent(0).repaint();
+		frame.validate(); 
+		frame.repaint(); 
 	}
+	 
 }

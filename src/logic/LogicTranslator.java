@@ -2,14 +2,13 @@ package logic;
 
 public class LogicTranslator {
 	
-	LogicTranslator(String Expression){
-		NormalConjunctiveForm(Expression);
-	}	
-	String[] NormalConjunctiveForm(String Expression){
-		
-		return null; 
+	 
+	Expression NormalConjunctiveForm(Expression Expression){ 
+		return Expression; 
 	}
 	
-	
+	static Expression NormalConjunctiveFormStep(Expression Expression){  
+		return Expression; 
+	}
 	 
 }
