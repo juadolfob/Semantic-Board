@@ -3,28 +3,24 @@ package windowmanager;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
+import java.awt.ScrollPane;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.JTextPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Style;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
-
+import main.Main;
+import logic.Expression;
 import logic.SemanticBoard;
-import media.font;
 
 public class WindowComponent {
 
@@ -40,13 +36,13 @@ public class WindowComponent {
 
 		String SHOW = MENU;
 		JLabel Expressionhead;
-		JLabel Warningpane = new JLabel(); 
+		JLabel Warningpane = new JLabel();
+		JTextArea SemanticBoard = new JTextArea();    
 		public Main() {
 
 			// ------------------------FINALS
 			final Color SubBarColor1 = Color.WHITE;
 			final Color SubBarColor2 = Color.BLACK;
-			final Color SubBarColor3 = Color.BLACK;
 			// ------------------------CREATE
 
 			// ------PAINT
@@ -55,14 +51,12 @@ public class WindowComponent {
 
 			// ------TEXT
 
-			
-
 			// ------TEXTFIELD
 
 			int BelowBarY = 1080 - 150;
 			int ExpressionBoxLenght = 1920 - 400;
 			int BelowBarHeight = 50;
-			int ExpressionBoxFontsize = 30; 
+			int ExpressionBoxFontsize = 30;
 			JTextField ExpressionBox = new JTextField();
 			ExpressionBox.setFont(new Font(Font.MONOSPACED, Font.PLAIN, ExpressionBoxFontsize));
 			ExpressionBox.setBounds(10, BelowBarY, ExpressionBoxLenght, BelowBarHeight);
@@ -114,8 +108,7 @@ public class WindowComponent {
 								}
 							}
 						}
-					}
-					System.out.println(size);
+					} 
 					ExpressionBox.setFont(new Font(Font.MONOSPACED, Font.PLAIN, size));
 				}
 			});
@@ -125,23 +118,25 @@ public class WindowComponent {
 			int SubBarXstart = 10;
 			int SubBarHeight = 40;
 			int SubBarButtonsWidth = 100;
-			
+
 			String implication = "→", conjunction = "∧", disjunction = "∨", doubleimplication = "↔", negation = "¬";
 			JButton b_check, b_implication, b_conjunction, b_disjunction, b_doubleimplication, b_negation;
 			b_check = new JButton("Check");
 			b_check.addActionListener(new ActionListener() {
-				boolean hasNewExpression=false;
-				public void actionPerformed(ActionEvent e) { 
-					if(hasNewExpression) {
-						SemanticBoard.EXP.Warnings.clear();   
+				boolean hasNewExpression = false;
+
+				public void actionPerformed(ActionEvent e) {
+					if (hasNewExpression) { 
 						remove(Warningpane);
-						Warningpane.setText(""); 
+						Warningpane.setText("");
 					}
-					SemanticBoard.setHeadExpression(ExpressionBox.getText()); 
-					refressemanticboard = true;  
+					main.Main.pan.buildSemanticTree(new Expression (ExpressionBox.getText()));
+					
+					refressemanticboard = true;
 					Warnings();
+					SemanticBoard();
 					WindowManager.Main.Refresh();
-					hasNewExpression=true;
+					hasNewExpression = true;
 				}
 			});
 			b_check.setBounds(ExpressionBoxLenght + 30, BelowBarY, 1920 - ExpressionBoxLenght - 50, BelowBarHeight);
@@ -265,9 +260,10 @@ public class WindowComponent {
 			add(b_disjunction);
 			add(b_doubleimplication);
 			add(b_negation);
-			add(ExpressionBox); 
+			add(ExpressionBox);
 			add(b_check);
 			add(b_implication);
+			setSize(1920, 1080);
 			setLayout(null);
 
 		}
@@ -281,32 +277,56 @@ public class WindowComponent {
 		public void RePaintSemanticBoard() {
 			if (showinghead)
 				remove(Expressionhead);
-			Expressionhead = new JLabel(SemanticBoard.EXP.getExpression());
+			Expressionhead = new JLabel(main.Main.pan.getHeadExpression().toString());
 			Expressionhead.setBounds(70, 50, 1900, 50);
 			Expressionhead.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 50));
 			repaint();
 			WindowManager.Main.Refresh();
-			add(Expressionhead); 
+			add(Expressionhead);
 			showinghead = true;
+		}
+
+		public void SemanticBoardBody() {
+
 		}
 
 		boolean showingwarnings = false;
 
-		
-
-		public void Warnings(){  
+		public void Warnings() {
 			if (showingwarnings)
-				remove(Warningpane);   
-			Warningpane.setForeground(new Color(50,0,0));
-			Warningpane.setBounds(10 + (100 * 5)+10,880 , 1480, 50);
-			Warningpane.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 40)); 
-			Warningpane.setText(SemanticBoard.EXP.getWarning(0)); 
+				remove(Warningpane);
+			Warningpane.setForeground(new Color(50, 0, 0));
+			Warningpane.setBounds(10 + (100 * 5) + 10, 880, 1480, 50);
+			Warningpane.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 40));
+			Warningpane.setText(main.Main.pan.getWarnings());
 			repaint();
 			add(Warningpane);
-			showingwarnings = true; 
+			showingwarnings = true;
 			WindowManager.Main.Refresh();
 		}
- 
+		JScrollPane scroll = new JScrollPane (SemanticBoard,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS); 
+		boolean showingSemanticBoard = false;
+		
+		public void SemanticBoard() { 
+			 
+			if (showingSemanticBoard)
+				remove(scroll);
+			SemanticBoard.setText(""); 
+			SemanticBoard.setForeground(new Color(50, 0, 0));
+			SemanticBoard.setBounds(10, 140, 1920-40, 1080-140-200);
+			SemanticBoard.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 30));
+			SemanticBoard.setText(main.Main.pan.ToDocument());   
+			SemanticBoard.setEditable(false);
+			repaint();    
+			
+			scroll.setBounds(10, 140, 1920-40, 1080-140-200); 
+			add(scroll);  
+			
+			
+
+			showingSemanticBoard = true;
+			WindowManager.Main.Refresh();  
+		}
 
 		public void paint(Graphics g) {
 			super.paint(g);

@@ -1,15 +1,18 @@
 package main;
+
 import java.io.IOException;
 
 import logic.SemanticBoard;
-import windowmanager.*; 
+import windowmanager.*;
 
- class Main extends Final{
-	 public static void main(String[] args) throws   IOException {   
-	 
-         
-//-------GUI 
-			 SemanticBoard pan = new SemanticBoard();
-			 new WindowManager(); 
-}
+public class Main extends Final {
+
+	public static SemanticBoard pan = new SemanticBoard();
+	public static void main(String[] args) throws IOException {
+
+		// -------GUI 
+
+		new WindowManager();
+		
+	}
 }
